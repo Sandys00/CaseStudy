@@ -10,6 +10,18 @@ st.write("# Gerätemanagement")
 # Eine Überschrift der zweiten Ebene
 st.write("## Geräteauswahl")
 
+#Tabs mit den Use Cases
+tab1, tab2, tab3, tab4 = st.tabs(["geraete", "nutzer", "reservierung", "wartung"])
+
+with tab1:
+    st.header("Geräte Verwaltung")
+    st.write("Hier können Sie Geräte verwalten")
+
+with tab2:
+    st.header("Nutzer Verwaltung")
+    st.write("Hier können Sie Nutzer verwalten")
+
+
 # Eine Auswahlbox mit hard-gecoded Optionen, das Ergebnis wird in current_device_example gespeichert
 current_device_example = st.selectbox(
     'Gerät auswählen',
