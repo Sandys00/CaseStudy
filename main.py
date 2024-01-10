@@ -1,7 +1,4 @@
-import
-streamlit
-as
-st
+import streamlit as st
 # Eine Überschrift der ersten Ebene
 st.write(
 "# Gerätemanagement"
@@ -20,7 +17,8 @@ current_device_example = st.selectbox(
 "Gerät_B"
 ], key=
 "sbDevice_example"
-)st.write(
+)
+st.write(
 F"Das ausgewählte Gerät ist
 {current_device_example}
 "
