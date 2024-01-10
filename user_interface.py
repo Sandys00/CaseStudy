@@ -7,9 +7,6 @@ from devices import Device
 # Eine Überschrift der ersten Ebene
 st.write("# Gerätemanagement")
 
-# Eine Überschrift der zweiten Ebene
-st.write("## Geräteauswahl")
-
 #Tabs mit den Use Cases
 tab1, tab2, tab3, tab4 = st.tabs(["Geräte Verwaltung", "Nutzer Verwaltung", "Reservierungssystem", "Wartungs-Management"])
 
@@ -18,42 +15,51 @@ with tab1:
     st.write("Hier können Sie Geräte verwalten")
     
     # Eine Auswahlbox mit hard-gecoded Optionen, das Ergebnis wird in current_device_example gespeichert
-    current_device_example = st.selectbox(
-        'Gerät auswählen',
-        options = ["Gerät_A", "Gerät_B"], key="sbDevice_example")
+    current_device = st.selectbox(
+        'Aktion auswählen',
+        options = ["Gerät anlegen", "Gerät ändern"], key="sbDevice_example")
+    
+    if current_device == "Gerät anlegen":
+        st.subheader("Gerät anlegen")
+        device_name = st.text_input("Gerätename eingeben", key="device_name_input")
+        if st.button("Gerät anlegen"):
+            st.success(f"Sie haben ein Gerät mit dem Namen '{device_name}' angelegt.")
+
+    elif current_device == "Gerät ändern":
+        st.write("Gerät ändern")
 
 
 with tab2:
     st.header("Nutzer Verwaltung")
-    st.write("Hier können Sie Nutzer verwalten")
+    st.write("Hier können Sie einen neuen Nutzer anlegen")
+    
+    nutzer_anlegen = st.text_input("Nutzername eingeben", key="nutzer_name_input")
+    if st.button("Nutzer anlegen"):
+        st.success(f"Sie haben einen Nutzer mit dem Namen '{nutzer_anlegen}' angelegt.")
 
-
-
-# Eine Auswahlbox mit Datenbankabfrage, das Ergebnis wird in current_device gespeichert
-devices_in_db = find_devices()
-
-if devices_in_db:
-    current_device_name = st.selectbox(
-        'Gerät auswählen',
-        options = devices_in_db, key="sbDevice")
-
-    if current_device_name in devices_in_db:
-        loaded_device = Device.load_data_by_device_name(current_device_name)
-        st.write(f"Loaded Device: {loaded_device}")
-
-
-    with st.form("Device"):
-        st.write(loaded_device.device_name)
-
-        #checkbox_val = st.checkbox("Is active?", value=loaded_device.is_active)
-        #loaded_device.is_active = checkbox_val
-
-        text_input_val = st.text_input("Geräte-Verantwortlicher", value=loaded_device.managed_by_user_id)
-        loaded_device.managed_by_user_id = text_input_val
-
-        # Every form must have a submit button.
-        submitted = st.form_submit_button("Submit")
-        if submitted:
-            loaded_device.store_data()
-            st.write("Data stored.")
-            st.rerun()
+with tab3:
+    st.header("Reservierungssystem")
+    auswahl_reservierungssystem = st.selectbox(
+        'Aktion auswählen',
+        options = ["Reservierung anzeigen", "Reservierung ein/austragen"], key="sbReservierungssystem")
+    
+    if auswahl_reservierungssystem == "Reservierung anzeigen":
+        st.subheader("Reservierung anzeigen")
+        st.write("Hier können Sie Reservierungen anzeigen")
+    elif auswahl_reservierungssystem == "Reservierung ein/austragen":
+        st.subheader("Reservierung ein/austragen")
+        st.write("Hier können Sie Reservierungen ein/austragen")
+    
+    
+with tab4:
+    st.header("Wartungs-Management")
+    auswahl_wartungsmanagement = st.selectbox(
+        'Aktion auswählen',
+        options = ["Wartung anzeigen", "Wartungskosten anzeigen"], key="sbWartungsmanagement")
+    
+    if auswahl_wartungsmanagement == "Wartung anzeigen":
+        st.subheader("Wartung anzeigen")
+        st.write("Hier können Sie Wartungen anzeigen")
+    elif auswahl_wartungsmanagement == "Wartungskosten anzeigen":
+        st.subheader("Wartungskosten anzeigen")
+        st.write("Hier können Sie Wartungskosten anzeigen")
