@@ -11,7 +11,7 @@ st.write("# Gerätemanagement")
 st.write("## Geräteauswahl")
 
 #Tabs mit den Use Cases
-tab1, tab2, tab3, tab4 = st.tabs(["geraete", "nutzer", "reservierung", "wartung"])
+tab1, tab2, tab3, tab4 = st.tabs(["Geräte Verwaltung", "Nutzer Verwaltung", "Reservierungssystem", "Wartungs-Management"])
 
 with tab1:
     st.header("Geräte Verwaltung")
