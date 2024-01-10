@@ -16,16 +16,18 @@ tab1, tab2, tab3, tab4 = st.tabs(["Geräte Verwaltung", "Nutzer Verwaltung", "Re
 with tab1:
     st.header("Geräte Verwaltung")
     st.write("Hier können Sie Geräte verwalten")
+    
+    # Eine Auswahlbox mit hard-gecoded Optionen, das Ergebnis wird in current_device_example gespeichert
+    current_device_example = st.selectbox(
+        'Gerät auswählen',
+        options = ["Gerät_A", "Gerät_B"], key="sbDevice_example")
+
 
 with tab2:
     st.header("Nutzer Verwaltung")
     st.write("Hier können Sie Nutzer verwalten")
 
 
-# Eine Auswahlbox mit hard-gecoded Optionen, das Ergebnis wird in current_device_example gespeichert
-current_device_example = st.selectbox(
-    'Gerät auswählen',
-    options = ["Gerät_A", "Gerät_B"], key="sbDevice_example")
 
 # Eine Auswahlbox mit Datenbankabfrage, das Ergebnis wird in current_device gespeichert
 devices_in_db = find_devices()
