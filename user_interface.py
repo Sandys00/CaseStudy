@@ -92,9 +92,11 @@ with tab1:
         else:
             st.write("Kein Gerät gespeichert")
 
-    with tab2:
+
+# Tab für Nutzer Verwaltung
+with tab2:
         st.header("Nutzer Verwaltung")
-        st.write("Hier können neue Nutzer angelegt werden")
+        st.write("Hier können neue Nutzer angelegt oder ausgewählt werden")
 
         # Administrator wählt Nutzer anlegen
         if st.button("Nutzer anlegen"):
@@ -114,9 +116,14 @@ with tab1:
                     # Beispiel: new_user.store_data()
                 
                     st.success("Nutzer erfolgreich angelegt!")
+                    
+        # Administrator wählt Nutzer auswählen
+        if st.button('Nutzer auswählen'):
+            st.header('Nutzer auswählen')
+            st.selectbox('Nutzer auswählen', options = ['Nutzer_A','Nutzer_B'], key='sbDevice_example')          
 
             
-    with tab3:
+with tab3:
         st.header("Reservierungssystem")
         st.write("Hier können Sie Reservierungen verwalten")
 
