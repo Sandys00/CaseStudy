@@ -1,0 +1,6 @@
+Virtuelle Umgebung:
+.venv/Scripts/Activate
+.venv/Scripts/Deactivate
+
+Zum Starten der App im Browser:
+streamlit python -m streamlit run user_interface.py
