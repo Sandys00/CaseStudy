@@ -2,6 +2,7 @@ import streamlit as st
 from queries import find_devices
 from devices import Device
 from datetime import datetime
+from users import User
 
 # Eine Überschrift der ersten Ebene
 st.write("# Gerätemanagement")
@@ -111,16 +112,18 @@ with tab2:
 
                 # System speichert Nutzerdaten
                 if submitted:
-                    new_user = User(id=user_email, name=user_name)
-                    # Annahme: Hier wird die Methode zum Speichern der Nutzerdaten implementiert
-                    # Beispiel: new_user.store_data()
+                    new_user = User(id=user_email, user_name=user_name)
+                    # Hier wird die Methode zum Speichern der Nutzerdaten implementiert
+                    new_user.store_data()
                 
                     st.success("Nutzer erfolgreich angelegt!")
                     
         # Administrator wählt Nutzer auswählen
         if st.button('Nutzer auswählen'):
             st.header('Nutzer auswählen')
-            st.selectbox('Nutzer auswählen', options = ['Nutzer_A','Nutzer_B'], key='sbDevice_example')          
+            current_device = st.selectbox('Nutzer auswählen', options = ['Nutzer_A','Nutzer_B'], key='sbDevice_example')  
+            
+            st.write(f"Das ausgewählte Nutzer ist {current_device}")        
 
             
 with tab3:

@@ -1,5 +1,6 @@
 import os
 from tinydb import TinyDB, Query
+
 class Device():
     # Class variable that is shared between all instances of the class
     db_connector = TinyDB(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'database.json')).table('devices')
@@ -35,6 +36,7 @@ class Device():
             print("Data inserted.")
     # Class method that can be called without an instance of the class to
     # construct an instance of the class
+            
     @classmethod
     def load_data_by_device_name(cls, device_name):
         # Load data from the database and create an instance of the Device class
