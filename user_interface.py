@@ -82,36 +82,16 @@ elif selected_tab == "Nutzerverwaltung":
 
         if submitted_new_user:
             # Überprüfe, ob der Benutzer bereits existiert
-            UserQuery = Query()
-            existing_user = User.db_connector.get(UserQuery.id == user_id)
+            if not user_name.lstrip() or not user_id.lstrip():
+                st.warning("Bitte füllen Sie alle Felder aus.")
+            else:   
+                UserQuery = Query()
+                existing_user = User.db_connector.get(UserQuery.id == user_id)
 
-            if existing_user:
-                st.warning("Benutzer existiert bereits.")
-            else:
-                # Füge den neuen Benutzer zur Datenbank hinzu
-                new_user = User(id=user_id, name=user_name)
-                User.db_connector.insert(new_user.__dict__)
-                st.success("Benutzer erfolgreich hinzugefügt.")
-    
-    # Restlicher Code für die Geräteverwaltung
-    if devices_in_db:
-        current_device_name = st.selectbox(
-            'Gerät auswählen',
-            options=devices_in_db, key="sbDevice")
-
-        if current_device_name in devices_in_db:
-            loaded_device = Device.load_data_by_device_name(current_device_name)
-            st.write(f"Loaded Device: {loaded_device}")
-
-        with st.form("Device"):
-            st.write(loaded_device.device_name)
-            text_input_val = st.text_input("Geräte-Verantwortlicher", value=loaded_device.managed_by_user_id)
-            loaded_device.managed_by_user_id = text_input_val
-
-            # Bestätigungsbutton für die Geräteverwaltung
-            submitted_device = st.form_submit_button("Submit")
-            if submitted_device:
-                loaded_device.store_data()
-                st.write("Data stored.")
-                st.rerun()
-
+                if existing_user:
+                    st.warning("Benutzer existiert bereits.")
+                else:
+                    # Füge den neuen Benutzer zur Datenbank hinzu
+                    new_user = User(id=user_id, name=user_name)
+                    User.db_connector.insert(new_user.__dict__)
+                    st.success("Benutzer erfolgreich hinzugefügt.")

@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Create a device
     date1 = datetime.strptime("2021-01-01", "%Y-%m-%d")
     date2 = datetime.strptime("2021-01-02", "%Y-%m-%d")
-    res1 = Reservation("res1", date1, date2)
+    res1 = reservation("res1", date1, date2)
     device1 = Device("Device1", "one@mci.edu", res1)
     print(res1.__dict__)
     device1.store_data()
