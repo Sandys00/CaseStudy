@@ -100,7 +100,7 @@ with tab2:
         st.write("Hier können neue Nutzer angelegt oder ausgewählt werden")
 
         # Administrator wählt Nutzer anlegen
-        if st.button("Nutzer anlegen"):
+        if st.button('Nutzer anlegen :sunglasses:', type="primary"):
             st.header("Nutzer anlegen")
 
             # Administrator gibt Nutzerdaten ein
@@ -108,22 +108,35 @@ with tab2:
                 user_email = st.text_input("E-Mail-Adresse des Nutzers")
                 user_name = st.text_input("Name des Nutzers")
 
-                submitted = st.form_submit_button("Nutzer anlegen")
-
-                # System speichert Nutzerdaten
-                if submitted:
-                    new_user = User(id=user_email, user_name=user_name)
-                    # Hier wird die Methode zum Speichern der Nutzerdaten implementiert
-                    new_user.store_data()
+                submitted = st.form_submit_button("Nutzer speichern")
                 
-                    st.success("Nutzer erfolgreich angelegt!")
+                
+                # System speichert Nutzerdaten
+                if submitted: 
+                    st.text('submitted')
+                    if not user_name.strip() or not user_email.strip():
+                        st.warning('Beide Felder müssen ausgefüllt sein!')
+                    else:
+                        use_exists_already = User.see_if_user_exists(user_email)
+
+                        if use_exists_already:
+                            st.warning('Diese Email-Adresse existiert bereits!')
+                        else:
+                            new_user = User(user_email, user_name)
+
+                            # Hier wird die Methode zum Speichern der Nutzerdaten implementiert
+                            new_user.store_data()
+
+                            st.write('Test!!!')
+                            st.success("Nutzer erfolgreich angelegt!")
+                                
                     
         # Administrator wählt Nutzer auswählen
         if st.button('Nutzer auswählen'):
             st.header('Nutzer auswählen')
-            current_device = st.selectbox('Nutzer auswählen', options = ['Nutzer_A','Nutzer_B'], key='sbDevice_example')  
+            current_user = st.selectbox('Nutzer auswählen', options = ['Nutzer_A','Nutzer_B'], key='sbDevice_example')  
             
-            st.write(f"Das ausgewählte Nutzer ist {current_device}")        
+            st.write(f"Der ausgewählte Nutzer ist {current_user}")        
 
             
 with tab3:

@@ -10,32 +10,37 @@ class User:
         self.user_name = user_name
         self.id = id
 
-    # Den folgenden Code benötigt man hier und bei den Devices
-         
+    def __str__(self) -> str:
+        return f'User {self.id} ({self.user_name})'
+    
+    # Saves data in the database
     def store_data(self):
         print("Storing user data...")
-        # Check if the device already exists in the database
+        # Check if the User already exists in the database
         UserQuery = Query()
         result = self.db_connector.search(UserQuery.user_name == self.user_name)
         if result:
-            # Update the existing record with the current instance's data
-            result = self.db_connector.update(self.__dict__, doc_ids=[result[0].doc_id])
-            print("User data updated.")
+# Update the existing record with the current instance's data
+            #?result = self.db_connector.update(self.__dict__, doc_ids=[result[0].doc_id])
+            print("User existiert bereits.")
         else:
             # If the device doesn't exist, insert a new record
-            self.db_connector.insert(self.__dict__)
+            self.db_connector.insert({'name':self.user_name, 'id':self.id})
             print("User data inserted.")
+
+
     # Class method that can be called without an instance of the class to
     # construct an instance of the class
 
-
     @classmethod
-    def load_data_by_user_name(cls, user_name):
-        # Load data from the database and create an instance of the Device class
+    def see_if_user_exists(cls, user_name):
+
+        print('Daten werden überprüft.')
         UserQuery = Query()                                   
         result = cls.db_connector.search(UserQuery.user_name == user_name)
+
         if result:
-            data = result[0]
-            return cls(data['id'], data['name'])
+            print('Dieser Benutzername existiert bereits.')
+            return True
         else:
-         return None
+         return False
