@@ -1,191 +1,117 @@
 import streamlit as st
 from queries import find_devices
 from devices import Device
+from devices import reservation
+from users import User
+from tinydb import Query
 from datetime import datetime
+from tinydb_serialization import SerializationMiddleware
 
 # Eine Überschrift der ersten Ebene
 st.write("# Gerätemanagement")
+devices_in_db = find_devices()
+# Tabs für verschiedene Funktionen
+tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Wartungsmanagement"]
+selected_tab = st.sidebar.selectbox("Wähle eine Funktion:", tabs)
 
-# Eine Überschrift der zweiten Ebene
-st.write("## Geräteauswahl")
+# Tab "Geräteverwaltung"
+if selected_tab == "Geräteverwaltung":
+    st.write("## Geräteverwaltung")
 
-# Tabs mit den Use Cases
-tab1, tab2, tab3, tab4 = st.tabs(["Geräte Verwaltung", "Nutzer Verwaltung", "Reservierungssystem", "Wartungs-Management"])
+    operation = st.radio("Operation auswählen", ["Gerät anlegen", "Gerät ändern"])
 
-with tab1:
-    st.header("Geräte Verwaltung")
-    st.write("Hier können Sie Geräte verwalten")
+    if operation == "Gerät anlegen":
+        st.write("### Gerät anlegen")
 
-    # Button zum Gerät anlegen
-    if st.button("Gerät anlegen"):
-        st.header("Gerät anlegen")
-        
-        with st.form("Neues Gerät"):
-            device_name = st.text_input("Name des Geräts")
-            responsible_person = st.text_input("Geräteverantwortlicher Nutzer")
-            end_of_life = st.date_input("Ende der Wartung")
-            first_maintenance = st.date_input("Erste Wartung")
-            maintenance_interval = st.number_input("Wartungsintervall (Tage)", min_value=1)
-            maintenance_cost = st.number_input("Wartungskosten", min_value=0.0)
+        device_name = st.text_input("Gerätename")
+        responsible_user_id = st.text_input("Geräteverantwortlicher (Nutzer-ID)")
 
-            submitted = st.form_submit_button("Gerät speichern")
+        # Annahme: Du hast eine Klasse User mit einer Methode zum Laden von Nutzern nach Nutzer-ID
+        responsible_user = User.load_user_by_id(responsible_user_id)
 
-            if submitted:
-                new_device = Device(
-                    name=device_name,
-                    responsible_person=responsible_person,
-                    end_of_life=end_of_life,
-                    first_maintenance=first_maintenance,
-                    maintenance_interval=maintenance_interval,
-                    maintenance_cost=maintenance_cost
-                )
-                
-                new_device.store_data()  # Implementiere die Methode, um Daten zu speichern
-                
-                # Überprüfe, ob das Gerät korrekt gespeichert wurde
-                loaded_device = Device.load_data_by_device_name(device_name)
-                if loaded_device:
-                    st.success("Gerät erfolgreich angelegt!")
-                else:
-                    st.error("Fehler beim Speichern des Geräts.")
-                    
-    # Button zum Gerät ändern
-    if st.button("Gerät ändern"):
-    # Hier kannst du den Code für das Ändern eines Geräts implementieren
-        st.session_state.edit_device = True
+        start_date = datetime.strptime("2022-01-24", "%Y-%m-%d")
+        end_date = datetime.strptime("2022-01-25", "%Y-%m-%d")
+        new_reservation = reservation("Test Reservation", start_date, end_date)
 
-    # Überprüfe, ob der Benutzer auf "Gerät ändern" geklickt hat und zeige dann den entsprechenden Abschnitt
-    if "edit_device" in st.session_state and st.session_state.edit_device:
-        st.header("Gerät ändern")
+        if responsible_user:
+            st.write(f"Verantwortlicher Nutzer: {responsible_user.name}")
 
-        devices_in_db = [device['device_name'] for device in Device.db_connector.all()]
+            # Hier könntest du weitere Eingabefelder für andere Gerätedaten hinzufügen
 
-        if devices_in_db:  # Überprüfe, ob Geräte vorhanden sind
-            current_device_name = st.selectbox(
-                'Gerät auswählen',
-                options=devices_in_db, key="sbDevice_edit")
+            # Jetzt wird der "Speichern"-Button hinzugefügt
+            if st.button("Gerät speichern"):
+                new_device = Device(device_name, responsible_user_id, new_reservation)
+                new_device.store_data()
+                st.success("Gerät erfolgreich angelegt!")
 
-            if current_device_name in devices_in_db:
-                loaded_device = Device.load_data_by_device_name(current_device_name)
-                st.write(f"Loaded Device: {loaded_device}")
+    elif operation == "Gerät ändern":
+        st.write("### Gerät ändern")
 
-                with st.form("Device"):
-                    st.text_input("Gerätname", value=loaded_device.device_name, key="device_name")
-                    st.text_input("Geräte-Verantwortlicher", value=loaded_device.managed_by_user_id, key="managed_by_user_id")
+        # Lade alle vorhandenen Geräte für die Auswahl
+        all_devices = Device.load_all_devices()
+        device_names = [device.device_name for device in all_devices]
 
-                    submitted = st.form_submit_button("Daten speichern")
-                    if submitted:
-                        # Hier keine __last_update setzen, da TinyDB automatisch ein Timestamp-Feld erstellt
-                        # loaded_device.__last_update = datetime.now()
-                        loaded_device.managed_by_user_id = st.session_state.device_managed_by_user_id
-                        loaded_device.device_name = st.session_state.device_name
+        selected_device_name = st.selectbox("Gerät auswählen", device_names)
 
-                        loaded_device.store_data()
-                        st.success("Daten erfolgreich gespeichert!")
-                        st.session_state.edit_device = False  # Setze den Status zurück, um auf die vorherige Seite zu wechseln
-        # Anzeigen der Liste aller gespeicherten Geräte oder Vermerk, wenn keine vorhanden sind
-        st.write("### Gespeicherte Geräte:")
-        devices_in_db = [device['device_name'] for device in Device.db_connector.all()]
-        if devices_in_db:
-            for device_name in devices_in_db:
-                st.write(f"- {device_name}")
-        else:
-            st.write("Kein Gerät gespeichert")
+        # Finde das ausgewählte Gerät anhand des Namens
+        selected_device = next((device for device in all_devices if device.device_name == selected_device_name), None)
 
-    with tab2:
-        st.header("Nutzer Verwaltung")
-        st.write("Hier können neue Nutzer angelegt werden")
+        if selected_device:
+            st.write(f"Gerät gefunden: {selected_device}")
 
-        # Administrator wählt Nutzer anlegen
-        if st.button("Nutzer anlegen"):
-            st.header("Nutzer anlegen")
-
-            # Administrator gibt Nutzerdaten ein
-            with st.form("Neuer Nutzer"):
-                user_email = st.text_input("E-Mail-Adresse des Nutzers")
-                user_name = st.text_input("Name des Nutzers")
-
-                submitted = st.form_submit_button("Nutzer anlegen")
-
-                # System speichert Nutzerdaten
-                if submitted:
-                    new_user = User(id=user_email, name=user_name)
-                    # Annahme: Hier wird die Methode zum Speichern der Nutzerdaten implementiert
-                    # Beispiel: new_user.store_data()
-                
-                    st.success("Nutzer erfolgreich angelegt!")
-
-            
-    with tab3:
-        st.header("Reservierungssystem")
-        st.write("Hier können Sie Reservierungen verwalten")
-
-        # Administrator wählt Gerät aus
-        devices_in_db = find_devices()
-        if devices_in_db:
-            selected_device = st.selectbox('Gerät auswählen', options=devices_in_db, key="sbDevice_reservation")
-
-        # Administrator gibt Reservierungsdaten ein
-        reservation_start = st.date_input("Startdatum der Reservierung")
-        reservation_end = st.date_input("Enddatum der Reservierung")
-        user_name = st.text_input("Name des reservierenden Nutzers")
-
-        # Validierung bestehender Reservierungen
-        # (Hier können Sie Ihre Validierungslogik implementieren)
-
-        # Administrator bestätigt Eingabe
-        if st.button("Reservierung bestätigen"):
-            # System speichert Reservierungsdaten
-            # (Hier können Sie den Code zum Speichern der Reservierung implementieren)
-
-            st.success("Reservierung erfolgreich gespeichert!")
+            # Jetzt wird der "Speichern"-Button hinzugefügt
+            if st.button("Gerät speichern"):
+                # Änderungen am Gerät vornehmen und speichern
+                selected_device.store_data()
+                st.success("Gerät erfolgreich geändert!")
 
         else:
-            st.warning("Es sind keine Geräte vorhanden. Bitte legen Sie zuerst ein Gerät an.")
+            st.warning("Gerät nicht gefunden. Bitte überprüfen Sie den Gerätenamen.")
 
-with tab4:
-    st.header("Wartungs-Management")
-    st.write("Hier erhalten Sie einen Überblick über Wartungen und Wartungskosten")
 
-    # System zeigt nächste Wartungstermine an
-    st.write("Nächste Wartungstermine")
+# Tab "Nutzerverwaltung"
+elif selected_tab == "Nutzerverwaltung":
+    st.write("## Nutzerverwaltung")
 
-    # Annahme: Hier werden die nächsten Wartungstermine für alle Geräte angezeigt
-    current_date = datetime.now()
-    next_maintenance_list = []
+    with st.form("Nutzer hinzufügen"):
+        user_id = st.text_input("ID")
+        user_name = st.text_input("Name")
 
-    # Annahme: 'maintenance_interval' ist in Tagen definiert
-    for device in find_devices():
-        loaded_device = Device.load_data_by_device_name(device)
-        if loaded_device:
-            next_maintenance_date = loaded_device.first_maintenance + timedelta(days=loaded_device.maintenance_interval)
-            if next_maintenance_date >= current_date:
-                next_maintenance_list.append({
-                    "Gerät": device,
-                    "Nächste Wartung": next_maintenance_date.strftime("%Y-%m-%d")
-                })
+        # Bestätigungsbutton für das Hinzufügen eines neuen Benutzers
+        submitted_new_user = st.form_submit_button("Nutzer hinzufügen")
 
-    if next_maintenance_list:
-        st.table(next_maintenance_list)
-    else:
-        st.info("Keine bevorstehenden Wartungen.")
+        if submitted_new_user:
+            # Überprüfe, ob der Benutzer bereits existiert
+            UserQuery = Query()
+            existing_user = User.db_connector.get(UserQuery.id == user_id)
 
-    # System zeigt Wartungskosten pro Quartal an
-    st.write("Wartungskosten pro Quartal")
+            if existing_user:
+                st.warning("Benutzer existiert bereits.")
+            else:
+                # Füge den neuen Benutzer zur Datenbank hinzu
+                new_user = User(id=user_id, name=user_name)
+                User.db_connector.insert(new_user.__dict__)
+                st.success("Benutzer erfolgreich hinzugefügt.")
+    
+    # Restlicher Code für die Geräteverwaltung
+    if devices_in_db:
+        current_device_name = st.selectbox(
+            'Gerät auswählen',
+            options=devices_in_db, key="sbDevice")
 
-    # Annahme: Hier werden die Wartungskosten pro Quartal für alle Geräte angezeigt
-    quarterly_costs_list = []
+        if current_device_name in devices_in_db:
+            loaded_device = Device.load_data_by_device_name(current_device_name)
+            st.write(f"Loaded Device: {loaded_device}")
 
-    for device in find_devices():
-        loaded_device = Device.load_data_by_device_name(device)
-        if loaded_device:
-            quarterly_cost = loaded_device.maintenance_cost * 4  # Annahme: Wartungskosten pro Quartal
-            quarterly_costs_list.append({
-                "Gerät": device,
-                "Wartungskosten pro Quartal": quarterly_cost
-            })
+        with st.form("Device"):
+            st.write(loaded_device.device_name)
+            text_input_val = st.text_input("Geräte-Verantwortlicher", value=loaded_device.managed_by_user_id)
+            loaded_device.managed_by_user_id = text_input_val
 
-    if quarterly_costs_list:
-        st.table(quarterly_costs_list)
-    else:
-        st.info("Keine Wartungskosten für Geräte vorhanden.")        
+            # Bestätigungsbutton für die Geräteverwaltung
+            submitted_device = st.form_submit_button("Submit")
+            if submitted_device:
+                loaded_device.store_data()
+                st.write("Data stored.")
+                st.rerun()
+
