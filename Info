@@ -4,3 +4,6 @@ Virtuelle Umgebung:
 
 Zum Starten der App im Browser:
 python -m streamlit run user_interface.py
+
+Wurde verwendet um pip install in der .venv zu installieren:
+python -m pip install --upgrade pip
