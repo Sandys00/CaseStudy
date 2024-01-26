@@ -23,3 +23,16 @@ class User:
         else:
             # If not found, return None
             return None
+
+    @classmethod
+    def delete_user_by_name(cls, user_name):
+        # Check if the user with the given name exists in the database
+        result = cls.db_connector.search(Query().name == user_name)
+
+        if result:
+            # If found, delete the user
+            cls.db_connector.remove(Query().name == user_name)
+            return True
+        else:
+            # If not found, return False
+            return False
