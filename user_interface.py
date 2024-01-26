@@ -107,25 +107,68 @@ if selected_tab == "Geräteverwaltung":
 elif selected_tab == "Nutzerverwaltung":
     st.write("## Nutzerverwaltung")
 
-    with st.form("Nutzer hinzufügen"):
-        user_id = st.text_input("ID")
-        user_name = st.text_input("Name")
+    tabs = ["Nutzer anlegen", "Nutzer löschen"]
+    selected_tab = st.radio("Wähle eine Funktion:", tabs)
+    
+    if selected_tab == "Nutzer anlegen":
+        with st.form("Nutzer hinzufügen"):
+            user_id = st.text_input("ID")
+            user_name = st.text_input("Name")
 
-        # Bestätigungsbutton für das Hinzufügen eines neuen Benutzers
-        submitted_new_user = st.form_submit_button("Nutzer hinzufügen")
+            # Bestätigungsbutton für das Hinzufügen eines neuen Benutzers
+            submitted_new_user = st.form_submit_button("Nutzer hinzufügen")
 
-        if submitted_new_user:
-            # Überprüfe, ob der Benutzer bereits existiert
-            if not user_name.lstrip() or not user_id.lstrip():
-                st.warning("Bitte füllen Sie alle Felder aus.")
-            else:   
-                UserQuery = Query()
-                existing_user = User.db_connector.get(UserQuery.id == user_id)
+            if submitted_new_user:
+                # Überprüfe, ob der Benutzer bereits existiert
+                if not user_name.lstrip() or not user_id.lstrip():
+                    st.warning("Bitte füllen Sie alle Felder aus.")
+                else:   
+                    UserQuery = Query()
+                    existing_user = User.db_connector.get(UserQuery.id == user_id)
 
-                if existing_user:
-                    st.warning("Benutzer existiert bereits.")
-                else:
-                    # Füge den neuen Benutzer zur Datenbank hinzu
-                    new_user = User(id=user_id, name=user_name)
-                    User.db_connector.insert(new_user.__dict__)
-                    st.success("Benutzer erfolgreich hinzugefügt.")
+                    if existing_user:
+                        st.warning("Benutzer existiert bereits.")
+                    else:
+                        # Füge den neuen Benutzer zur Datenbank hinzu
+                        new_user = User(id=user_id, name=user_name)
+                        User.db_connector.insert(new_user.__dict__)
+                        st.success("Benutzer erfolgreich hinzugefügt.")
+
+    if selected_tab == "Nutzer löschen":
+        with st.form("Nutzer löschen"):            
+
+            auswahl_deletion = st.radio("Nutzer löschen mit", ["Name", "ID"])
+            
+            if auswahl_deletion == "Name":
+                user_name = st.text_input("Name")
+            if auswahl_deletion == "ID":
+                user_id = st.text_input("ID")
+
+            submitted_delete_user = st.form_submit_button("Nutzer löschen")
+
+            if submitted_delete_user:
+                if auswahl_deletion == "Name":
+                    if not user_name.lstrip():
+                        st.warning("Bitte füllen Sie alle Felder aus.")
+                    else:
+                        UserQuery = Query()
+                        existing_user = User.db_connector.get(UserQuery.name == user_name)
+
+                        if existing_user:
+                            User.db_connector.remove(UserQuery.name == user_name)
+                            st.success("Benutzer erfolgreich gelöscht.")
+                        else:
+                            st.warning("Benutzer existiert nicht.")
+                
+                elif auswahl_deletion == "ID":
+                    if not user_id.lstrip():
+                        st.warning("Bitte füllen Sie alle Felder aus.")
+                    else:
+                        UserQuery = Query()
+                        existing_user = User.db_connector.get(UserQuery.id == user_id)
+
+                        if existing_user:
+                            User.db_connector.remove(UserQuery.id == user_id)
+                            st.success("Benutzer erfolgreich gelöscht.")
+                        else:
+                            st.warning("Benutzer-ID existiert nicht.")
