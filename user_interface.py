@@ -37,10 +37,22 @@ if selected_tab == "Geräteverwaltung":
             st.write(f"Verantwortlicher Nutzer: {responsible_user.name}")
 
             # Hier könntest du weitere Eingabefelder für andere Gerätedaten hinzufügen
+            end_of_life = st.date_input("End of life")
+            first_maintenance = st.date_input("First maintenance")
+            next_maintenance = st.date_input("Next maintenance")
+            maintenance_interval = st.number_input("Maintenance interval")
+            maintenance_cost = st.number_input("Maintenance cost")
+            reservation_device = st.text_input("Reservation")
 
             # Jetzt wird der "Speichern"-Button hinzugefügt
             if st.button("Gerät speichern"):
-                new_device = Device(device_name, responsible_user_id, new_reservation)
+                new_device = Device(device_name,
+                                    responsible_user_id, 
+                                    end_of_life, first_maintenance, 
+                                    next_maintenance, 
+                                    maintenance_interval, 
+                                    maintenance_cost, 
+                                    reservation_device)
                 new_device.store_data()
                 st.success("Gerät erfolgreich angelegt!")
 
@@ -48,25 +60,47 @@ if selected_tab == "Geräteverwaltung":
         st.write("### Gerät ändern")
 
         # Lade alle vorhandenen Geräte für die Auswahl
-        all_devices = Device.load_all_devices()
-        device_names = [device.device_name for device in all_devices]
+        all_device_names = Device.get_all_names()
+        device_name = st.selectbox("Gerät auswählen", all_device_names)
+        show_code = 0
+        col1, col2 = st.columns(2)
 
-        selected_device_name = st.selectbox("Gerät auswählen", device_names)
+        # Button "Gerätedaten anzeigen"
+        if col1.button("Gerätedaten anzeigen"):
+            show_code = 1
 
-        # Finde das ausgewählte Gerät anhand des Namens
-        selected_device = next((device for device in all_devices if device.device_name == selected_device_name), None)
-
-        if selected_device:
-            st.write(f"Gerät gefunden: {selected_device}")
-
-            # Jetzt wird der "Speichern"-Button hinzugefügt
-            if st.button("Gerät speichern"):
-                # Änderungen am Gerät vornehmen und speichern
-                selected_device.store_data()
+        # Button "Gerätedaten ausblenden"
+        if col2.button("Gerätedaten ausblenden"):
+            show_code = 0
+        
+        if show_code:
+            device = Device.load_device_by_name(device_name)
+            device["device_name"] = st.text_input("Gerätename", device["device_name"])
+            device["managed_by_user_id"] = st.text_input("Geräteverantwortlicher (Nutzer-ID)", device["managed_by_user_id"])
+            device["end_of_life"] = st.date_input("End of life", device["end_of_life"])
+            device["first_maintenance"] = st.date_input("First maintenance", device["first_maintenance"])
+            device["next_maintenance"] = st.date_input("Next maintenance", device["next_maintenance"])
+            device["_Device__maintenance_interval"] = st.number_input("Maintenance interval", device["_Device__maintenance_interval"])
+            device["_Device__maintenance_cost"] = st.number_input("Maintenance cost", device["_Device__maintenance_cost"])
+            device["reservation"] = st.text_input("Reservation", device["reservation"])
+                
+            
+            
+            if st.button("Gerät ändern"):
+                #hier code zum speichern reinschreiben
+                changed_device = Device(
+                                        device_name=device["device_name"],
+                                        managed_by_user_id=device["managed_by_user_id"],
+                                        end_of_life=device["end_of_life"],
+                                        first_maintenance=device["first_maintenance"],
+                                        next_maintenance=device["next_maintenance"],
+                                        maintenance_interval=device["_Device__maintenance_interval"],
+                                        maintenance_cost=device["_Device__maintenance_cost"],
+                                        reservation=device["reservation"]
+                                        )    
+                changed_device.store_data()                
                 st.success("Gerät erfolgreich geändert!")
-
-        else:
-            st.warning("Gerät nicht gefunden. Bitte überprüfen Sie den Gerätenamen.")
+    
 
 
 # Tab "Nutzerverwaltung"
