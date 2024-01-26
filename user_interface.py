@@ -137,20 +137,38 @@ elif selected_tab == "Nutzerverwaltung":
     if selected_tab == "Nutzer löschen":
         with st.form("Nutzer löschen"):            
 
-            user_name = st.text_input("Name")
-            submitted_delete_user = st.form_submit_button("Nutzer löschen")
+            auswahl_deletion = st.radio("Nutzer löschen mit", ["Name", "ID"])
             
-            if submitted_delete_user:
-                # Überprüfe, ob der Benutzer existiert
-                if not user_name.lstrip():
-                    st.warning("Bitte geben Sie einen Namen ein.")
-                else:
-                    UserQuery = Query()
-                    existing_user = User.db_connector.get(UserQuery.name == user_name)
+            if auswahl_deletion == "Name":
+                user_name = st.text_input("Name")
+            if auswahl_deletion == "ID":
+                user_id = st.text_input("ID")
 
-                    if existing_user:
-                        # Lösche den Benutzer aus der Datenbank
-                        User.db_connector.remove(UserQuery.name == user_name)
-                        st.success("Benutzer erfolgreich gelöscht.")
+            submitted_delete_user = st.form_submit_button("Nutzer löschen")
+
+            if submitted_delete_user:
+                if auswahl_deletion == "Name":
+                    if not user_name.lstrip():
+                        st.warning("Bitte füllen Sie alle Felder aus.")
                     else:
-                        st.warning("Benutzer existiert nicht.")
+                        UserQuery = Query()
+                        existing_user = User.db_connector.get(UserQuery.name == user_name)
+
+                        if existing_user:
+                            User.db_connector.remove(UserQuery.name == user_name)
+                            st.success("Benutzer erfolgreich gelöscht.")
+                        else:
+                            st.warning("Benutzer existiert nicht.")
+                
+                elif auswahl_deletion == "ID":
+                    if not user_id.lstrip():
+                        st.warning("Bitte füllen Sie alle Felder aus.")
+                    else:
+                        UserQuery = Query()
+                        existing_user = User.db_connector.get(UserQuery.id == user_id)
+
+                        if existing_user:
+                            User.db_connector.remove(UserQuery.id == user_id)
+                            st.success("Benutzer erfolgreich gelöscht.")
+                        else:
+                            st.warning("Benutzer-ID existiert nicht.")
