@@ -15,7 +15,7 @@ class Device():
 
     # Constructor
     def __init__(self, device_name : str, managed_by_user_id: str, end_of_life: datetime, first_maintenance: datetime, next_maintenance: datetime,
-                 maintenance_interval: int, maintenance_cost: float, reservation: str):
+                 maintenance_interval: int, maintenance_cost: float, reservation: reservation = None):
         self.device_name = device_name
         self.managed_by_user_id = managed_by_user_id
         self.is_active = True
@@ -96,7 +96,7 @@ class Device():
     
 
 class reservation():
-    def __init__(self, name, start_date, end_date):
+    def __init__(self, name:str, start_date:datetime, end_date:datetime):
         self.name = name
         self.start_date = start_date
         self.end_date = end_date
