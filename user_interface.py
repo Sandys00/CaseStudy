@@ -11,7 +11,7 @@ from tinydb_serialization import SerializationMiddleware
 st.write("# Gerätemanagement")
 devices_in_db = find_devices()
 # Tabs für verschiedene Funktionen
-tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Wartungsmanagement"]
+tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Wartungsmanagement", "Reservierungsmanagement"]
 selected_tab = st.sidebar.selectbox("Wähle eine Funktion:", tabs)
 
 # Tab "Geräteverwaltung"
@@ -172,3 +172,11 @@ elif selected_tab == "Nutzerverwaltung":
                             st.success("Benutzer erfolgreich gelöscht.")
                         else:
                             st.warning("Benutzer-ID existiert nicht.")
+
+# Tab "Wartungsmanagement"
+if selected_tab == "Wartungsmanagement":
+    st.write("## Wartungsmanagement")
+
+# Tab "Reservierungsmanagement"
+if selected_tab == "Reservierungsmanagement":
+    st.write("## Reservierungsmanagement")
