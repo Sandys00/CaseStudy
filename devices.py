@@ -64,8 +64,6 @@ class Device():
             self.db_connector.insert(self.__dict__)
             st.success(f"Daten für Gerät {self.device_name} erfolgreich eingefügt.")
 
-            
-    # Class method that can be called without an instance of the class to construct an instance of the class
     @classmethod
     def load_all_devices(cls):
         # Lade alle Geräte aus der Datenbank
@@ -112,35 +110,3 @@ class Device():
             return data
         else:
             return None
-
-        
-    
-    
-
-class reservation():
-    def __init__(self, name:str, start_date:datetime, end_date:datetime):
-        self.name = name
-        self.start_date = start_date
-        self.end_date = end_date
-
-    def to_dict(self):
-        return self.__dict__
-
-
-if __name__ == "__main__":
-    # Create a device
-    device1 = Device("Device1", "one@mci.edu")
-    device2 = Device("Device2", "two@mci.edu") 
-    device3 = Device("Device3", "two@mci.edu") 
-    device1.store_data()
-    device2.store_data()
-    device3.store_data()
-    device4 = Device("Device3", "four@mci.edu") 
-    device4.store_data()
-
-    loaded_device = Device.load_data_by_device_name('Device2')
-    if loaded_device:
-        print(f"Loaded Device: {loaded_device}")
-    else:
-        print("Device not found.")
-    
