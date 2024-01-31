@@ -12,6 +12,7 @@ st.write("# Gerätemanagement")
 devices_in_db = find_devices()
 # Tabs für verschiedene Funktionen
 tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Reservierungen", "Wartungsmanagement"]
+
 selected_tab = st.sidebar.selectbox("Wähle eine Funktion:", tabs)
 
 # Tab "Geräteverwaltung"
@@ -238,3 +239,4 @@ elif selected_tab == "Reservierungen":
         
 elif selected_tab == "Wartungsmanagement":
     pass
+
