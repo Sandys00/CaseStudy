@@ -11,7 +11,8 @@ from tinydb_serialization import SerializationMiddleware
 st.write("# Gerätemanagement")
 devices_in_db = find_devices()
 # Tabs für verschiedene Funktionen
-tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Wartungsmanagement", "Reservierungsmanagement"]
+tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Reservierungen", "Wartungsmanagement"]
+
 selected_tab = st.sidebar.selectbox("Wähle eine Funktion:", tabs)
 
 # Tab "Geräteverwaltung"
@@ -42,17 +43,17 @@ if selected_tab == "Geräteverwaltung":
             next_maintenance = st.date_input("Next maintenance")
             maintenance_interval = st.number_input("Maintenance interval")
             maintenance_cost = st.number_input("Maintenance cost")
-            reservation_device = st.text_input("Reservation")
+            
 
             # Jetzt wird der "Speichern"-Button hinzugefügt
             if st.button("Gerät speichern"):
                 new_device = Device(device_name,
                                     responsible_user_id, 
-                                    end_of_life, first_maintenance, 
+                                    end_of_life, 
+                                    first_maintenance, 
                                     next_maintenance, 
                                     maintenance_interval, 
-                                    maintenance_cost, 
-                                    reservation_device)
+                                    maintenance_cost)
                 new_device.store_data()
                 st.success("Gerät erfolgreich angelegt!")
 
@@ -62,45 +63,31 @@ if selected_tab == "Geräteverwaltung":
         # Lade alle vorhandenen Geräte für die Auswahl
         all_device_names = Device.get_all_names()
         device_name = st.selectbox("Gerät auswählen", all_device_names)
-        show_code = 0
-        col1, col2 = st.columns(2)
-
-        # Button "Gerätedaten anzeigen"
-        if col1.button("Gerätedaten anzeigen"):
-            show_code = 1
-
-        # Button "Gerätedaten ausblenden"
-        if col2.button("Gerätedaten ausblenden"):
-            show_code = 0
         
-        if show_code:
-            device = Device.load_device_by_name(device_name)
-            device["device_name"] = st.text_input("Gerätename", device["device_name"])
-            device["managed_by_user_id"] = st.text_input("Geräteverantwortlicher (Nutzer-ID)", device["managed_by_user_id"])
-            device["end_of_life"] = st.date_input("End of life", device["end_of_life"])
-            device["first_maintenance"] = st.date_input("First maintenance", device["first_maintenance"])
-            device["next_maintenance"] = st.date_input("Next maintenance", device["next_maintenance"])
-            device["_Device__maintenance_interval"] = st.number_input("Maintenance interval", device["_Device__maintenance_interval"])
-            device["_Device__maintenance_cost"] = st.number_input("Maintenance cost", device["_Device__maintenance_cost"])
-            device["reservation"] = st.text_input("Reservation", device["reservation"])
-                
-            
-            
-            if st.button("Gerät ändern"):
-                #hier code zum speichern reinschreiben
-                changed_device = Device(
-                                        device_name=device["device_name"],
-                                        managed_by_user_id=device["managed_by_user_id"],
-                                        end_of_life=device["end_of_life"],
-                                        first_maintenance=device["first_maintenance"],
-                                        next_maintenance=device["next_maintenance"],
-                                        maintenance_interval=device["_Device__maintenance_interval"],
-                                        maintenance_cost=device["_Device__maintenance_cost"],
-                                        reservation=device["reservation"]
-                                        )    
-                changed_device.store_data()                
-                st.success("Gerät erfolgreich geändert!")
-    
+        device = Device.load_device_by_name(device_name)
+        device["device_name"] = st.text_input("Gerätename", device["device_name"])
+        device["managed_by_user_id"] = st.text_input("Geräteverantwortlicher (Nutzer-ID)", device["managed_by_user_id"])
+        device["end_of_life"] = st.date_input("End of life", device["end_of_life"])
+        device["first_maintenance"] = st.date_input("First maintenance", device["first_maintenance"])
+        device["next_maintenance"] = st.date_input("Next maintenance", device["next_maintenance"])
+        device["_Device__maintenance_interval"] = st.number_input("Maintenance interval", device["_Device__maintenance_interval"])
+        device["_Device__maintenance_cost"] = st.number_input("Maintenance cost", device["_Device__maintenance_cost"])
+        
+
+        if st.button("Gerät ändern"):
+            #hier code zum speichern reinschreiben
+            changed_device = Device(
+                                    device_name=device["device_name"],
+                                    managed_by_user_id=device["managed_by_user_id"],
+                                    end_of_life=device["end_of_life"],
+                                    first_maintenance=device["first_maintenance"],
+                                    next_maintenance=device["next_maintenance"],
+                                    maintenance_interval=device["_Device__maintenance_interval"],
+                                    maintenance_cost=device["_Device__maintenance_cost"],
+                                    )    
+            changed_device.store_data()                
+            st.success("Gerät erfolgreich geändert!")
+
 
 
 # Tab "Nutzerverwaltung"
@@ -108,9 +95,9 @@ elif selected_tab == "Nutzerverwaltung":
     st.write("## Nutzerverwaltung")
 
     tabs = ["Nutzer anlegen", "Nutzer löschen"]
-    selected_tab = st.radio("Wähle eine Funktion:", tabs)
+    selected_tab_nutzer = st.radio("Wähle eine Funktion:", tabs)
     
-    if selected_tab == "Nutzer anlegen":
+    if selected_tab_nutzer == "Nutzer anlegen":
         with st.form("Nutzer hinzufügen"):
             user_id = st.text_input("ID")
             user_name = st.text_input("Name")
@@ -134,7 +121,7 @@ elif selected_tab == "Nutzerverwaltung":
                         User.db_connector.insert(new_user.__dict__)
                         st.success("Benutzer erfolgreich hinzugefügt.")
 
-    if selected_tab == "Nutzer löschen":
+    if selected_tab_nutzer == "Nutzer löschen":
         with st.form("Nutzer löschen"):            
 
             auswahl_deletion = st.radio("Nutzer löschen mit", ["Name", "ID"])
@@ -173,10 +160,83 @@ elif selected_tab == "Nutzerverwaltung":
                         else:
                             st.warning("Benutzer-ID existiert nicht.")
 
-# Tab "Wartungsmanagement"
-if selected_tab == "Wartungsmanagement":
-    st.write("## Wartungsmanagement")
 
-# Tab "Reservierungsmanagement"
-if selected_tab == "Reservierungsmanagement":
-    st.write("## Reservierungsmanagement")
+
+
+elif selected_tab == "Reservierungen":
+    st.write("Ändern sie ihre Reservierungen hier")
+    tabs_reservierung = ["Reservierung machen", "Reservierung ändern", "Reservierungen anzeigen"]
+    selected_tab_reservierung = st.radio("Wähle eine Funktion: ", tabs_reservierung)
+
+    if selected_tab_reservierung == "Reservierung machen":
+
+        all_device_names = Device.get_all_names_for_reservation()
+        print(all_device_names)
+        if all_device_names != None:
+            device_name_reservation = st.selectbox("Gerät auswählen", all_device_names)
+
+            with st.form("Reservierung machen"):
+                st.write("Reservierung vornehmen für folgendes Gerät: " + device_name_reservation)
+                device_reservation = Device.load_device_by_name(device_name_reservation)
+                device_reservation["reservation_start"] = st.date_input("Gebe hier den Startzeitpunkt der Reservierung ein: ", device_reservation["reservation_start"])
+                device_reservation["reservation_end"] = st.date_input("Gebe hier den Endzeitpunkt der Reservierung ein: ", device_reservation["reservation_end"])
+
+                submit_button_reservation = st.form_submit_button("Hier Reservierung bestätigen")
+                if submit_button_reservation:
+                    changed_device_reservation = Device(
+                                                        device_name=device_reservation["device_name"],
+                                                        managed_by_user_id=device_reservation["managed_by_user_id"],
+                                                        end_of_life=device_reservation["end_of_life"],
+                                                        first_maintenance=device_reservation["first_maintenance"],
+                                                        next_maintenance=device_reservation["next_maintenance"],
+                                                        maintenance_interval=device_reservation["_Device__maintenance_interval"],
+                                                        maintenance_cost=device_reservation["_Device__maintenance_cost"],
+                                                        reservation_start=device_reservation["reservation_start"],
+                                                        reservation_end= device_reservation["reservation_end"]
+                                                        )   
+                    changed_device_reservation.store_data()
+                    st.success("Reservierung angelegt")
+
+        else:
+            st.write("Keine Geräte ohne Reservierung vorhanden")    
+
+    elif selected_tab_reservierung == "Reservierung ändern":
+        all_device_names = Device.get_all_names_for_change_reservation()
+        device_change_reservation = st.selectbox("Gerät auswählen", all_device_names)
+
+        with st.form("Reservierung ändern"):
+            st.write("Reservierung ändern für folgendes Gerät: " + device_change_reservation)
+            device_reservation = Device.load_device_by_name(device_change_reservation)
+            device_reservation["reservation_start"] = st.date_input("Gebe hier den Startzeitpunkt der Reservierung ein: ", device_reservation["reservation_start"])
+            device_reservation["reservation_end"] = st.date_input("Gebe hier den Endzeitpunkt der Reservierung ein: ", device_reservation["reservation_end"])
+
+            submit_button_reservation = st.form_submit_button("Hier Reservierung bestätigen")
+            if submit_button_reservation:
+                changed_device_reservation = Device(
+                                                    device_name=device_reservation["device_name"],
+                                                    managed_by_user_id=device_reservation["managed_by_user_id"],
+                                                    end_of_life=device_reservation["end_of_life"],
+                                                    first_maintenance=device_reservation["first_maintenance"],
+                                                    next_maintenance=device_reservation["next_maintenance"],
+                                                    maintenance_interval=device_reservation["_Device__maintenance_interval"],
+                                                    maintenance_cost=device_reservation["_Device__maintenance_cost"],
+                                                    reservation_start=device_reservation["reservation_start"],
+                                                    reservation_end= device_reservation["reservation_end"]
+                                                    )   
+                changed_device_reservation.store_data()
+                st.success("Reservierung angelegt")
+
+    elif selected_tab_reservierung == "Reservierungen anzeigen":
+        if st.button("Reservierungen anzeigen"):
+            reservation_devices = Device.get_all_names_for_change_reservation()
+            #device_reservations = st.selectbox("Gerät auswählen", reservation_devices)
+
+            for device6 in reservation_devices:
+                device = Device.load_device_by_name(device6)
+                st.write("Gerät:", device6)
+                st.write("Reservierungsanfang:", device["reservation_start"])
+                st.write("Reservierungsende:", device["reservation_end"])
+        
+elif selected_tab == "Wartungsmanagement":
+    pass
+
