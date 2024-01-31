@@ -8,8 +8,9 @@ from datetime import datetime
 from tinydb_serialization import SerializationMiddleware
 
 # Eine Überschrift der ersten Ebene
-st.write("# Gerätemanagement")
+st.write("# Geräte- & Nutzerverwaltung")
 devices_in_db = find_devices()
+
 # Tabs für verschiedene Funktionen
 tabs = ["Geräteverwaltung", "Nutzerverwaltung", "Wartungsmanagement"]
 selected_tab = st.sidebar.selectbox("Wähle eine Funktion:", tabs)
@@ -78,7 +79,7 @@ elif selected_tab == "Nutzerverwaltung":
         user_name = st.text_input("Name")
 
         # Bestätigungsbutton für das Hinzufügen eines neuen Benutzers
-        submitted_new_user = st.form_submit_button("Nutzer hinzufügen")
+        submitted_new_user = st.form_submit_button("Nutzer speichern")
 
         if submitted_new_user:
             # Überprüfe, ob der Benutzer bereits existiert
