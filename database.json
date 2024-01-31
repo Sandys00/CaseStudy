@@ -1,1 +1,54 @@
-{"users": {"1": {"name": "Oskar", "id": "2"}, "2": {"name": "Tim", "id": "3"}, "3": {"name": "Sandra", "id": "1"}, "4": {"name": "Mats", "id": "4"}, "5": {"name": "", "id": "23"}, "6": {"name": "max", "id": "5"}}, "devices": {"1": {"device_name": "drucker", "managed_by_user_id": "4", "is_active": true, "end_of_life": "{TinyDate}:2024-01-26", "first_maintenance": "{TinyDate}:2024-01-26", "next_maintenance": "{TinyDate}:2024-01-26", "_Device__maintenance_interval": 0.0, "_Device__maintenance_cost": 0.0, "reservation": "reservation_test"}, "2": {"device_name": "drucker_2", "managed_by_user_id": "1", "is_active": true, "end_of_life": "{TinyDate}:2024-01-26", "first_maintenance": "{TinyDate}:2024-01-26", "next_maintenance": "{TinyDate}:2024-01-26", "_Device__maintenance_interval": 0.0, "_Device__maintenance_cost": 0.0, "reservation": "morgen"}, "3": {"device_name": "maschine", "managed_by_user_id": "4", "is_active": true, "end_of_life": "{TinyDate}:2024-01-26", "first_maintenance": "{TinyDate}:2024-01-26", "next_maintenance": "{TinyDate}:2024-01-26", "_Device__maintenance_interval": 0.0, "_Device__maintenance_cost": 0.0, "reservation": "test"}, "4": {"device_name": "test", "managed_by_user_id": "5", "is_active": true, "end_of_life": "{TinyDate}:2024-01-26", "first_maintenance": "{TinyDate}:2024-01-26", "next_maintenance": "{TinyDate}:2024-01-26", "_Device__maintenance_interval": 0.0, "_Device__maintenance_cost": 0.0, "reservation": "denkdirwasaus"}}}
+{
+    "users": {
+        "1": {
+            "name": "Oskar",
+            "id": "2"
+        },
+        "2": {
+            "name": "Tim",
+            "id": "3"
+        },
+        "3": {
+            "name": "Sandra",
+            "id": "1"
+        }
+    },
+    "devices": {
+        "1": {
+            "device_name": "Drucker Tim",
+            "managed_by_user_id": "3",
+            "is_active": true,
+            "end_of_life": "{TinyDate}:2024-01-31",
+            "first_maintenance": "{TinyDate}:2024-01-31",
+            "next_maintenance": "{TinyDate}:2024-01-31",
+            "_Device__maintenance_interval": 0.0,
+            "_Device__maintenance_cost": 0.0,
+            "reservation_start": "{TinyDate}:2024-01-30",
+            "reservation_end": "{TinyDate}:2024-02-02"
+        },
+        "2": {
+            "device_name": "Drucker Oskar",
+            "managed_by_user_id": "2",
+            "is_active": true,
+            "end_of_life": "{TinyDate}:2024-01-31",
+            "first_maintenance": "{TinyDate}:2024-01-31",
+            "next_maintenance": "{TinyDate}:2024-01-31",
+            "_Device__maintenance_interval": 0.0,
+            "_Device__maintenance_cost": 0.0,
+            "reservation_start": "{TinyDate}:2024-01-17",
+            "reservation_end": "{TinyDate}:2024-01-26"
+        },
+        "3": {
+            "device_name": "Drucker Sandra",
+            "managed_by_user_id": "1",
+            "is_active": true,
+            "end_of_life": "{TinyDate}:2024-01-31",
+            "first_maintenance": "{TinyDate}:2024-01-31",
+            "next_maintenance": "{TinyDate}:2024-01-31",
+            "_Device__maintenance_interval": 0.0,
+            "_Device__maintenance_cost": 0.0,
+            "reservation_start": "{TinyDate}:2024-01-10",
+            "reservation_end": "{TinyDate}:2024-01-25"
+        }
+    }
+}
