@@ -230,12 +230,18 @@ elif selected_tab == "Reservierungen":
         if st.button("Reservierungen anzeigen"):
             reservation_devices = Device.get_all_names_for_change_reservation()
 
-            for device6 in reservation_devices:
-                device = Device.load_device_by_name(device6)
-                st.write("Gerät:", device6)
-                st.write("Reservierungsanfang:", device["reservation_start"])
-                st.write("Reservierungsende:", device["reservation_end"])
-        
+            with st.form("Zeige Reservierungen an"):
+                for device6 in reservation_devices:
+                    device = Device.load_device_by_name(device6)
+                    st.write("Gerät:", device6)
+                    st.write("Reservierungsanfang:", device["reservation_start"])
+                    st.write("Reservierungsende:", device["reservation_end"])
+                    st.divider()
+                submitted = st.form_submit_button("Reservierungen gelesen")
+                if submitted:
+                    st.success("Reservierungen gelesen")        
+
+
 elif selected_tab == "Wartungsmanagement":
     tabs =  ["Wartungen anzeigen", "Wartungskosten anzeigen"]
     auswahl = st.radio("Wähle eine Funktion:", tabs)
