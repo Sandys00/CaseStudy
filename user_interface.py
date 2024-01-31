@@ -229,7 +229,6 @@ elif selected_tab == "Reservierungen":
     elif selected_tab_reservierung == "Reservierungen anzeigen":
         if st.button("Reservierungen anzeigen"):
             reservation_devices = Device.get_all_names_for_change_reservation()
-            #device_reservations = st.selectbox("Gerät auswählen", reservation_devices)
 
             for device6 in reservation_devices:
                 device = Device.load_device_by_name(device6)
@@ -238,5 +237,34 @@ elif selected_tab == "Reservierungen":
                 st.write("Reservierungsende:", device["reservation_end"])
         
 elif selected_tab == "Wartungsmanagement":
-    pass
+    tabs =  ["Wartungen anzeigen", "Wartungskosten anzeigen"]
+    auswahl = st.radio("Wähle eine Funktion:", tabs)
 
+    if auswahl == "Wartungen anzeigen":
+        reservation_devices = Device.get_all_names()
+    	
+        with st.form("Zeige Wartung an"):
+            for device6 in reservation_devices:
+                device = Device.load_device_by_name(device6)
+                st.write("Gerät:", device6)
+                st.write("Erste Wartung:", device["first_maintenance"])
+                st.write("Nächste Wartung:", device["next_maintenance"])
+                st.write("Wartungsintervall:", device["_Device__maintenance_interval"])
+                st.divider()
+            submitted = st.form_submit_button("Wartung gelesen")
+            if submitted:
+                st.success("Wartung gelesen")
+
+
+    if auswahl == "Wartungskosten anzeigen":
+        reservation_devices = Device.get_all_names()
+
+        with st.form("Wartungskosten anzeigen"):
+            for device6 in reservation_devices:
+                device = Device.load_device_by_name(device6)
+                st.write("Gerät:", device6)
+                st.write("Wartungskosten:", device["_Device__maintenance_cost"])
+                st.divider()
+            submitted = st.form_submit_button("Wartungsintervall gelesen")
+            if submitted:
+                st.success("Wartungsintervall gelesen")
