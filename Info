@@ -7,3 +7,12 @@ python -m streamlit run user_interface.py
 
 Wurde verwendet um pip install in der .venv zu installieren:
 python -m pip install --upgrade pip
+
+Abfragen des Status:
+git status
+
+[Stashing nimmt den unsauberen Zustand Ihres Arbeitsverzeichnisses
+das heißt, Ihre geänderten getrackten Dateien und gestagten Änderungen
+und speichert ihn in einem Stapel unvollendeter Änderungen, die Sie 
+jederzeit (auch auf einen anderen Branch) wieder anwenden können.:]
+git stash
